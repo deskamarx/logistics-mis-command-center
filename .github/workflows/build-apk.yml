@@ -16,51 +16,48 @@ jobs:
       - name: Checkout Code Repository
         uses: actions/checkout@v4
 
-      - name: Set up Java JDK 21
+      - name: Set up Java JDK 17
         uses: actions/setup-java@v4
         with:
-          distribution: 'zulu'
-          java-version: '21'
+          distribution: 'temurin'
+          java-version: '17'
 
-      - name: Setup Gradle
+      - name: Setup Gradle CLI
         uses: gradle/actions/setup-gradle@v3
 
-      - name: Make Gradle Wrapper Executable
-        run: chmod +x ./android/gradlew || true
-
-      - name: Build Debug & Release APKs
-        working-directory: ./android
+      - name: Build Android APK with Gradle
         run: |
+          cd android
           gradle assembleDebug --no-daemon
 
-      - name: Locate & Rename APK Asset
+      - name: Prepare APK Asset Artifact
         run: |
           mkdir -p output_apk
           cp android/app/build/outputs/apk/debug/app-debug.apk output_apk/AmayaLogisticsMIS_v2.0.0.apk
-          echo "APK generated at output_apk/AmayaLogisticsMIS_v2.0.0.apk"
+          echo "APK successfully built at output_apk/AmayaLogisticsMIS_v2.0.0.apk"
 
-      - name: Upload Android APK as Build Artifact
+      - name: Upload Android APK as Artifact
         uses: actions/upload-artifact@v4
         with:
           name: AmayaLogisticsMIS-Android-APK
           path: output_apk/AmayaLogisticsMIS_v2.0.0.apk
           retention-days: 90
 
-      - name: Create Live GitHub Release with APK
+      - name: Publish Live GitHub Release with APK
         if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
         uses: softprops/action-gh-release@v2
         with:
           tag_name: v2.0.0
-          name: "Release v2.0.0 - Amaya Logistics MIS Android APK"
+          name: "Production Release v2.0.0 - Amaya Logistics MIS Android APK"
           body: |
             ## 📱 Amaya Logistics MIS & Command Center Android App
             
             - **App Version:** 2.0.0
-            - **Live Sync Engine:** Pre-configured with live InfinityFree backend & Google Sheets telemetry
+            - **Live Telemetry & Sync:** Auto-synced with InfinityFree backend & Google Sheets
             - **Target Account:** `bahalul1964@gmail.com`
             
             ### 📥 Download & Install
-            Download **`AmayaLogisticsMIS_v2.0.0.apk`** below to install directly on any Android phone/tablet!
+            Download **`AmayaLogisticsMIS_v2.0.0.apk`** below to install directly on your Android phone or tablet!
           files: output_apk/AmayaLogisticsMIS_v2.0.0.apk
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
