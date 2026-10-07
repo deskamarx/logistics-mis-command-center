@@ -1,0 +1,28 @@
+# Operating System Files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# IDE & Editor Files
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Android Build Outputs
+android/.gradle/
+android/build/
+android/app/build/
+android/local.properties
+android/.navigation/
+android/captures/
+*.apk
+*.aab
+
+# Node & Temp Files
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.temp/
+scratch/

@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">Amaya Logistics MIS</string>
+    <string name="server_url_default">https://bahalul-mis.infinityfreeapp.com/index.php</string>
+</resources>

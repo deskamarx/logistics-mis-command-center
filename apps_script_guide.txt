@@ -1,0 +1,44 @@
+========================================================================
+GOOGLE APPS SCRIPT WEB APP BRIDGE FOR PRIVATE SPREADSHEETS
+Account: bahalul1964@gmail.com
+========================================================================
+
+Since your Google Spreadsheets may be restricted/private, this simple Google Apps Script bridges data securely without making your spreadsheet publicly visible on the internet.
+
+------------------------------------------------------------------------
+STEP-BY-STEP SETUP INSTRUCTIONS (Takes 1 Minute):
+------------------------------------------------------------------------
+
+1. Open your private Google Sheet in Google Chrome while logged into:
+   bahalul1964@gmail.com
+
+2. Click on "Extensions" in the top menu -> Select "Apps Script".
+
+3. Delete any existing code in Code.gs and paste the following 10 lines of code:
+
+function doGet(e) {
+  var sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
+  var data = sheet.getDataRange().getValues();
+  var csvContent = data.map(function(row) {
+    return row.map(function(field) {
+      return '"' + String(field).replace(/"/g, '""') + '"';
+    }).join(',');
+  }).join("\n");
+  
+  return ContentService.createTextOutput(csvContent).setMimeType(ContentService.MimeType.TEXT);
+}
+
+4. Click the "Save" icon (Floppy disk).
+
+5. Click "Deploy" button (top right) -> Select "New deployment".
+
+6. Select Type: "Web app"
+   - Description: "Logistics MIS App Bridge"
+   - Execute as: "Me (bahalul1964@gmail.com)"
+   - Who has access: "Anyone" (This exposes the script URL output, while keeping the sheet itself private).
+
+7. Click "Deploy" -> Copy the "Web app URL" (looks like https://script.google.com/macros/s/.../exec).
+
+8. Open your Logistics MIS App -> Go to "Manage Spreadsheets" -> Click "Add New Spreadsheet Link" -> Paste the Web App URL and select "Google Apps Script Web App".
+
+Your private spreadsheet will now sync instantly with your InfinityFree app!
