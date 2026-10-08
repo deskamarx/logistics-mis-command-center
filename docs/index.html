@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>Amaya Logistics MIS — Command Center</title>
+  <meta name="description" content="Amaya Logistics Management Information System — real-time operations dashboard, P&L tracking, team accountability, and decision intelligence." />
+  <meta name="theme-color" content="#0a0e1a" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.2/dist/chart.umd.min.js"></script>
+</head>
+<body>
+
+<!-- LOGIN SCREEN -->
+<div id="loginScreen" class="screen active">
+  <div class="login-bg">
+    <div class="login-particles" id="particles"></div>
+    <div class="login-container">
+      <div class="login-logo">
+        <div class="logo-icon">
+          <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect width="48" height="48" rx="12" fill="url(#lg1)"/>
+            <path d="M12 34L24 14L36 34H12Z" fill="white" opacity="0.9"/>
+            <circle cx="24" cy="24" r="6" fill="url(#lg2)"/>
+            <defs>
+              <linearGradient id="lg1" x1="0" y1="0" x2="48" y2="48" gradientUnits="userSpaceOnUse"><stop stop-color="#6366f1"/><stop offset="1" stop-color="#06b6d4"/></linearGradient>
+              <linearGradient id="lg2" x1="18" y1="18" x2="30" y2="30" gradientUnits="userSpaceOnUse"><stop stop-color="#f59e0b"/><stop offset="1" stop-color="#ef4444"/></linearGradient>
+            </defs>
+          </svg>
+        </div>
+        <div class="logo-text">
+          <h1>Amaya Logistics</h1>
+          <span>Command Center</span>
+        </div>
+      </div>
+      <div class="login-card glass-card">
+        <h2>Sign In</h2>
+        <p class="login-subtitle">Access your operations dashboard</p>
+        <div id="loginError" class="alert alert-error hidden"></div>
+        <form id="loginForm" autocomplete="on">
+          <div class="form-group">
+            <label for="loginEmail">Email Address</label>
+            <div class="input-wrapper">
+              <svg class="input-icon" viewBox="0 0 20 20" fill="currentColor"><path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z"/><path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z"/></svg>
+              <input type="email" id="loginEmail" name="email" placeholder="your@email.com" required autocomplete="email" />
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="loginPassword">Password</label>
+            <div class="input-wrapper">
+              <svg class="input-icon" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd"/></svg>
+              <input type="password" id="loginPassword" name="password" placeholder="••••••••" required autocomplete="current-password" />
+              <button type="button" class="btn-toggle-pw" id="togglePw">
+                <svg viewBox="0 0 20 20" fill="currentColor"><path d="M10 12a2 2 0 100-4 2 2 0 000 4z"/><path fill-rule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clip-rule="evenodd"/></svg>
+              </button>
+            </div>
+          </div>
+          <button type="submit" class="btn btn-primary btn-full" id="loginBtn">
+            <span class="btn-text">Sign In</span>
+            <span class="btn-spinner hidden"></span>
+          </button>
+        </form>
+        <div class="login-footer"><p>Authorized access only · Amaya Group &copy; 2026</p></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MAIN APP SCREEN -->
+<div id="appScreen" class="screen hidden">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <div class="sidebar-logo">
+        <svg viewBox="0 0 32 32" fill="none"><rect width="32" height="32" rx="8" fill="url(#sl1)"/><path d="M8 22L16 10L24 22H8Z" fill="white" opacity="0.9"/><circle cx="16" cy="16" r="4" fill="url(#sl2)"/><defs><linearGradient id="sl1" x1="0" y1="0" x2="32" y2="32"><stop stop-color="#6366f1"/><stop offset="1" stop-color="#06b6d4"/></linearGradient><linearGradient id="sl2" x1="12" y1="12" x2="20" y2="20"><stop stop-color="#f59e0b"/><stop offset="1" stop-color="#ef4444"/></linearGradient></defs></svg>
+        <span>Amaya MIS</span>
+      </div>
+      <button class="sidebar-close" id="sidebarClose">&#10005;</button>
+    </div>
+    <nav class="sidebar-nav">
+      <button class="nav-item active" data-page="dashboard">
+        <svg viewBox="0 0 20 20" fill="currentColor"><path d="M2 10a8 8 0 018-8v8h8a8 8 0 11-16 0z"/><path d="M12 2.252A8.014 8.014 0 0117.748 8H12V2.252z"/></svg>
+        <span>Dashboard</span>
+      </button>
+      <button class="nav-item" data-page="pnl">
+        <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M4 4a2 2 0 00-2 2v4a2 2 0 002 2V6h10a2 2 0 00-2-2H4zm2 6a2 2 0 012-2h8a2 2 0 012 2v4a2 2 0 01-2 2H8a2 2 0 01-2-2v-4zm6 4a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd"/></svg>
+        <span>P&amp;L Analysis</span>
+      </button>
+      <button class="nav-item" data-page="operations">
+        <svg viewBox="0 0 20 20" fill="currentColor"><path d="M8 16.5a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0zM15 16.5a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0z"/><path d="M3 4a1 1 0 00-1 1v10a1 1 0 001 1h1.05a2.5 2.5 0 014.9 0H10a1 1 0 001-1V5a1 1 0 00-1-1H3zM14 7a1 1 0 00-1 1v6.05A2.5 2.5 0 0115.95 16H17a1 1 0 001-1v-5a1 1 0 00-.293-.707l-2-2A1 1 0 0015 7h-1z"/></svg>
+        <span>Operations</span>
+      </button>
+      <button class="nav-item" data-page="team">
+        <svg viewBox="0 0 20 20" fill="currentColor"><path d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v3h8v-3zM6 8a2 2 0 11-4 0 2 2 0 014 0zM16 18v-3a5.972 5.972 0 00-.75-2.906A3.005 3.005 0 0119 15v3h-3zM4.75 12.094A5.973 5.973 0 004 15v3H1v-3a3 3 0 013.75-2.906z"/></svg>
+        <span>Team &amp; Accountability</span>
+      </button>
+      <button class="nav-item" data-page="sheets">
+        <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M6 2a2 2 0 00-2 2v12a2 2 0 002 2h8a2 2 0 002-2V7.414A2 2 0 0015.414 6L12 2.586A2 2 0 0010.586 2H6zm2 10a1 1 0 10-2 0v3a1 1 0 102 0v-3zm2-3a1 1 0 011 1v5a1 1 0 11-2 0v-5a1 1 0 011-1zm4-1a1 1 0 10-2 0v7a1 1 0 102 0V8z" clip-rule="evenodd"/></svg>
+        <span>Spreadsheets</span>
+      </button>
+      <button class="nav-item" data-page="alerts">
+        <svg viewBox="0 0 20 20" fill="currentColor"><path d="M10 2a6 6 0 00-6 6v3.586l-.707.707A1 1 0 004 14h12a1 1 0 00.707-1.707L16 11.586V8a6 6 0 00-6-6zM10 18a3 3 0 01-3-3h6a3 3 0 01-3 3z"/></svg>
+        <span>Alerts &amp; Decisions</span>
+        <span class="badge" id="alertBadge">0</span>
+      </button>
+      <button class="nav-item" data-page="reports">
+        <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M6 2a2 2 0 00-2 2v12a2 2 0 002 2h8a2 2 0 002-2V4a2 2 0 00-2-2H6zm1 2a1 1 0 000 2h6a1 1 0 100-2H7zm6 7a1 1 0 011 1v3a1 1 0 11-2 0v-3a1 1 0 011-1zm-3 3a1 1 0 100 2 1 1 0 000-2zm-2-2a1 1 0 011-1h.01a1 1 0 110 2H8a1 1 0 01-1-1z" clip-rule="evenodd"/></svg>
+        <span>Reports</span>
+      </button>
+      <div class="nav-divider"></div>
+      <button class="nav-item" data-page="settings" id="adminNavItem" style="display:none">
+        <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M11.49 3.17c-.38-1.56-2.6-1.56-2.98 0a1.532 1.532 0 01-2.286.948c-1.372-.836-2.942.734-2.106 2.106.54.886.061 2.042-.947 2.287-1.561.379-1.561 2.6 0 2.978a1.532 1.532 0 01.947 2.287c-.836 1.372.734 2.942 2.106 2.106a1.532 1.532 0 012.287.947c.379 1.561 2.6 1.561 2.978 0a1.533 1.533 0 012.287-.947c1.372.836 2.942-.734 2.106-2.106a1.533 1.533 0 01.947-2.287c1.561-.379 1.561-2.6 0-2.978a1.532 1.532 0 01-.947-2.287c.836-1.372-.734-2.942-2.106-2.106a1.532 1.532 0 01-2.287-.947zM10 13a3 3 0 100-6 3 3 0 000 6z" clip-rule="evenodd"/></svg>
+        <span>Admin Settings</span>
+      </button>
+    </nav>
+    <div class="sidebar-user">
+      <div class="user-avatar" id="sidebarAvatar">A</div>
+      <div class="user-info">
+        <p class="user-name" id="sidebarUserName">Loading...</p>
+        <p class="user-role" id="sidebarUserRole">User</p>
+      </div>
+      <button class="btn-logout" id="logoutBtn" title="Sign Out">
+        <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M3 3a1 1 0 00-1 1v12a1 1 0 102 0V4a1 1 0 00-1-1zm10.293 9.293a1 1 0 001.414 1.414l3-3a1 1 0 000-1.414l-3-3a1 1 0 10-1.414 1.414L14.586 9H7a1 1 0 100 2h7.586l-1.293 1.293z" clip-rule="evenodd"/></svg>
+      </button>
+    </div>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <main class="main-content" id="mainContent">
+    <header class="topbar">
+      <div class="topbar-left">
+        <button class="btn-menu" id="menuToggle">&#9776;</button>
+        <div class="topbar-title">
+          <h2 id="pageTitle">Dashboard</h2>
+          <p id="pageSubtitle">Real-time operations overview</p>
+        </div>
+      </div>
+      <div class="topbar-right">
+        <div class="topbar-time" id="topbarTime"></div>
+        <button class="btn-refresh" id="refreshBtn" title="Refresh">&#8635;</button>
+        <div class="topbar-sync" id="syncIndicator">
+          <span class="sync-dot"></span>
+          <span id="syncText">Live</span>
+        </div>
+      </div>
+    </header>
+
+    <div class="pages-container">
+
+      <!-- DASHBOARD -->
+      <div class="page active" id="page-dashboard">
+        <div class="kpi-grid" id="kpiGrid">
+          <div class="kpi-card glass-card" id="kpi-revenue">
+            <div class="kpi-icon" style="background:linear-gradient(135deg,#6366f1,#8b5cf6)">
+              <svg viewBox="0 0 20 20" fill="currentColor"><path d="M8.433 7.418c.155-.103.346-.196.567-.267v1.698a2.305 2.305 0 01-.567-.267C8.07 8.34 8 8.114 8 8c0-.114.07-.34.433-.582zM11 12.849v-1.698c.22.071.412.164.567.267.364.243.433.468.433.582 0 .114-.07.34-.433.582a2.305 2.305 0 01-.567.267z"/><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-13a1 1 0 10-2 0v.092a4.535 4.535 0 00-1.676.662C6.602 6.234 6 7.009 6 8c0 .99.602 1.765 1.324 2.246.48.32 1.054.545 1.676.662v1.941c-.391-.127-.68-.317-.843-.504a1 1 0 10-1.51 1.31c.562.649 1.413 1.076 2.353 1.253V15a1 1 0 102 0v-.092a4.535 4.535 0 001.676-.662C13.398 13.766 14 12.991 14 12c0-.99-.602-1.765-1.324-2.246A4.535 4.535 0 0011 9.092V7.151c.391.127.68.317.843.504a1 1 0 101.511-1.31c-.563-.649-1.413-1.076-2.354-1.253V5z" clip-rule="evenodd"/></svg>
+            </div>
+            <div class="kpi-data">
+              <p class="kpi-label">Total Revenue</p>
+              <p class="kpi-value" id="kpiRevenue">Loading...</p>
+              <p class="kpi-change positive" id="kpiRevenueChange">Calculating...</p>
+            </div>
+          </div>
+          <div class="kpi-card glass-card" id="kpi-profit">
+            <div class="kpi-icon" style="background:linear-gradient(135deg,#10b981,#059669)">
+              <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M3.293 9.707a1 1 0 010-1.414l6-6a1 1 0 011.414 0l6 6a1 1 0 01-1.414 1.414L11 5.414V17a1 1 0 11-2 0V5.414L4.707 9.707a1 1 0 01-1.414 0z" clip-rule="evenodd"/></svg>
+            </div>
+            <div class="kpi-data">
+              <p class="kpi-label">Net Profit</p>
+              <p class="kpi-value" id="kpiProfit">Loading...</p>
+              <p class="kpi-change positive" id="kpiProfitChange">Calculating...</p>
+            </div>
+          </div>
+          <div class="kpi-card glass-card" id="kpi-margin">
+            <div class="kpi-icon" style="background:linear-gradient(135deg,#f59e0b,#d97706)">
+              <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/></svg>
+            </div>
+            <div class="kpi-data">
+              <p class="kpi-label">Profit Margin</p>
+              <p class="kpi-value" id="kpiMargin">Loading...</p>
+              <p class="kpi-change positive" id="kpiMarginChange">Calculating...</p>
+            </div>
+          </div>
+          <div class="kpi-card glass-card" id="kpi-shipments">
+            <div class="kpi-icon" style="background:linear-gradient(135deg,#06b6d4,#0891b2)">
+              <svg viewBox="0 0 20 20" fill="currentColor"><path d="M8 16.5a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0zM15 16.5a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0z"/><path d="M3 4a1 1 0 00-1 1v10a1 1 0 001 1h1.05a2.5 2.5 0 014.9 0H10a1 1 0 001-1V5a1 1 0 00-1-1H3zM14 7a1 1 0 00-1 1v6.05A2.5 2.5 0 0115.95 16H17a1 1 0 001-1v-5a1 1 0 00-.293-.707l-2-2A1 1 0 0015 7h-1z"/></svg>
+            </div>
+            <div class="kpi-data">
+              <p class="kpi-label">Total Shipments</p>
+              <p class="kpi-value" id="kpiShipments">Loading...</p>
+              <p class="kpi-change positive" id="kpiShipmentsChange">Calculating...</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="charts-row">
+          <div class="chart-card glass-card">
+            <div class="chart-header">
+              <h3>Revenue vs Expenses</h3>
+              <div class="chart-period" id="revenuePeriod">
+                <button class="period-btn active" data-period="30">30D</button>
+                <button class="period-btn" data-period="90">90D</button>
+                <button class="period-btn" data-period="365">1Y</button>
+              </div>
+            </div>
+            <canvas id="revenueChart" height="260"></canvas>
+          </div>
+          <div class="chart-card glass-card">
+            <div class="chart-header"><h3>Shipment Categories</h3></div>
+            <canvas id="categoryChart" height="260"></canvas>
+          </div>
+        </div>
+
+        <div class="bottom-row">
+          <div class="glass-card attention-card">
+            <h3>&#9888;&#65039; Needs Attention</h3>
+            <div id="attentionList" class="attention-list"></div>
+          </div>
+          <div class="glass-card recent-card">
+            <h3>&#128336; Recent Activity</h3>
+            <div id="recentActivity" class="activity-list"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- P&L -->
+      <div class="page hidden" id="page-pnl">
+        <div class="page-header-row">
+          <div>
+            <h2 class="section-title">Profit &amp; Loss Analysis</h2>
+            <p class="section-subtitle">Financial performance breakdown</p>
+          </div>
+          <div class="date-filter-group">
+            <input type="month" id="pnlMonth" class="form-control-sm" />
+            <button class="btn btn-secondary btn-sm" id="pnlExport">Export CSV</button>
+          </div>
+        </div>
+        <div class="pnl-summary-grid">
+          <div class="pnl-box pnl-income glass-card"><h4>Total Income</h4><p class="pnl-amount" id="pnlIncome">—</p></div>
+          <div class="pnl-box pnl-expense glass-card"><h4>Total Expenses</h4><p class="pnl-amount" id="pnlExpense">—</p></div>
+          <div class="pnl-box pnl-net glass-card"><h4>Net Profit</h4><p class="pnl-amount" id="pnlNet">—</p></div>
+          <div class="pnl-box pnl-margin glass-card"><h4>Margin %</h4><p class="pnl-amount" id="pnlMarginPct">—</p></div>
+        </div>
+        <div class="glass-card" style="padding:1.5rem;margin-top:1.5rem;">
+          <h3>Monthly Trend</h3>
+          <canvas id="pnlChart" height="280"></canvas>
+        </div>
+        <div class="glass-card" style="padding:1.5rem;margin-top:1.5rem;">
+          <h3>Transaction Breakdown</h3>
+          <div class="table-wrapper">
+            <table class="data-table" id="pnlTable">
+              <thead><tr><th>Date</th><th>Description</th><th>Category</th><th>Income</th><th>Expense</th><th>Balance</th></tr></thead>
+              <tbody id="pnlTableBody"><tr><td colspan="6" class="table-loading">Loading...</td></tr></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- OPERATIONS -->
+      <div class="page hidden" id="page-operations">
+        <div class="page-header-row">
+          <div>
+            <h2 class="section-title">Operations Overview</h2>
+            <p class="section-subtitle">Shipment tracking &amp; workstation performance</p>
+          </div>
+          <select id="opsFilter" class="form-control-sm">
+            <option value="all">All Status</option>
+            <option value="delivered">Delivered</option>
+            <option value="in-transit">In Transit</option>
+            <option value="pending">Pending</option>
+            <option value="returned">Returned</option>
+          </select>
+        </div>
+        <div class="workstation-grid" id="workstationGrid"></div>
+        <div class="glass-card" style="padding:1.5rem;margin-top:1.5rem;">
+          <h3>Shipment Log</h3>
+          <div class="table-wrapper">
+            <table class="data-table">
+              <thead><tr><th>Order ID</th><th>Workstation</th><th>Date</th><th>Items</th><th>Amount</th><th>Status</th><th>Responsible</th></tr></thead>
+              <tbody id="opsTableBody"><tr><td colspan="7" class="table-loading">Loading...</td></tr></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- TEAM -->
+      <div class="page hidden" id="page-team">
+        <div class="page-header-row">
+          <div>
+            <h2 class="section-title">Team &amp; Accountability</h2>
+            <p class="section-subtitle">Who is responsible for what</p>
+          </div>
+        </div>
+        <div class="team-grid" id="teamGrid"></div>
+        <div class="glass-card" style="padding:1.5rem;margin-top:1.5rem;">
+          <h3>Performance Rankings</h3>
+          <canvas id="teamChart" height="240"></canvas>
+        </div>
+      </div>
+
+      <!-- SPREADSHEETS -->
+      <div class="page hidden" id="page-sheets">
+        <div class="page-header-row">
+          <div>
+            <h2 class="section-title">Spreadsheet Sources</h2>
+            <p class="section-subtitle">Manage Google Sheets data connections</p>
+          </div>
+          <button class="btn btn-primary" id="addSheetBtn">+ Add Sheet</button>
+        </div>
+        <div id="sheetsGrid" class="sheets-grid"></div>
+        <div class="modal-overlay hidden" id="addSheetModal">
+          <div class="modal glass-card">
+            <div class="modal-header">
+              <h3>Add Google Sheet</h3>
+              <button class="modal-close" id="closeSheetModalBtn">&#10005;</button>
+            </div>
+            <form id="addSheetForm">
+              <div class="form-group">
+                <label>Sheet Name / Label</label>
+                <input type="text" id="sheetName" class="form-control" placeholder="e.g. OPS-MIS Main" required />
+              </div>
+              <div class="form-group">
+                <label>Google Sheet URL</label>
+                <input type="url" id="sheetUrl" class="form-control" placeholder="https://docs.google.com/spreadsheets/d/..." required />
+              </div>
+              <div class="form-group">
+                <label>Category</label>
+                <select id="sheetCategory" class="form-control">
+                  <option value="logistics">Logistics</option>
+                  <option value="finance">Finance</option>
+                  <option value="hr">HR</option>
+                  <option value="inventory">Inventory</option>
+                  <option value="other">Other</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label>Notes (optional)</label>
+                <textarea id="sheetNotes" class="form-control" rows="2" placeholder="What data does this sheet track?"></textarea>
+              </div>
+              <div class="modal-actions">
+                <button type="button" class="btn btn-secondary" id="cancelSheetBtn">Cancel</button>
+                <button type="submit" class="btn btn-primary">Add Sheet</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+
+      <!-- ALERTS -->
+      <div class="page hidden" id="page-alerts">
+        <div class="page-header-row">
+          <div>
+            <h2 class="section-title">Alerts &amp; Decisions</h2>
+            <p class="section-subtitle">Items needing your attention</p>
+          </div>
+          <button class="btn btn-secondary btn-sm" id="clearAlertsBtn">Mark All Read</button>
+        </div>
+        <div id="alertsList" class="alerts-list"></div>
+      </div>
+
+      <!-- REPORTS -->
+      <div class="page hidden" id="page-reports">
+        <div class="page-header-row">
+          <div>
+            <h2 class="section-title">Reports</h2>
+            <p class="section-subtitle">Generate and download business reports</p>
+          </div>
+        </div>
+        <div class="reports-grid">
+          <div class="glass-card report-card" id="reportExecutive">
+            <div class="report-icon" style="background:linear-gradient(135deg,#6366f1,#8b5cf6)">&#128196;</div>
+            <h3>Executive Summary</h3>
+            <p>Full business overview with key metrics, P&amp;L, and strategic recommendations</p>
+            <span class="report-tag">PDF / Print</span>
+          </div>
+          <div class="glass-card report-card" id="reportPnl">
+            <div class="report-icon" style="background:linear-gradient(135deg,#10b981,#059669)">&#128181;</div>
+            <h3>P&amp;L Statement</h3>
+            <p>Detailed profit and loss with monthly breakdown and expense categories</p>
+            <span class="report-tag">CSV / Print</span>
+          </div>
+          <div class="glass-card report-card" id="reportOps">
+            <div class="report-icon" style="background:linear-gradient(135deg,#06b6d4,#0891b2)">&#128666;</div>
+            <h3>Operations Report</h3>
+            <p>Shipment log, delivery rates, workstation performance and bottlenecks</p>
+            <span class="report-tag">CSV / Print</span>
+          </div>
+          <div class="glass-card report-card" id="reportTeam">
+            <div class="report-icon" style="background:linear-gradient(135deg,#f59e0b,#d97706)">&#128101;</div>
+            <h3>Team Performance</h3>
+            <p>Individual accountability metrics, workstation rankings and KPI attainment</p>
+            <span class="report-tag">PDF / Print</span>
+          </div>
+        </div>
+        <div class="glass-card hidden" id="reportOutput" style="padding:2rem;margin-top:1.5rem;">
+          <div class="report-output-header">
+            <h3 id="reportTitle">Report</h3>
+            <div>
+              <button class="btn btn-secondary btn-sm" onclick="window.print()">&#128424; Print</button>
+              <button class="btn btn-primary btn-sm" id="reportCsvBtn">&#11015; CSV</button>
+            </div>
+          </div>
+          <div id="reportContent"></div>
+        </div>
+      </div>
+
+      <!-- SETTINGS (Admin Only) -->
+      <div class="page hidden" id="page-settings">
+        <div class="page-header-row">
+          <div>
+            <h2 class="section-title">Admin Settings</h2>
+            <p class="section-subtitle">Manage users, access, and configuration</p>
+          </div>
+        </div>
+        <div class="settings-grid">
+          <div class="glass-card" style="padding:1.5rem;">
+            <h3>User Management</h3>
+            <p class="text-muted">Invite partners and manage access levels.</p>
+            <div id="usersList" style="margin-top:1rem;"></div>
+            <div class="form-group" style="margin-top:1.5rem;">
+              <label>Invite User by Email</label>
+              <div class="input-row">
+                <input type="email" id="inviteEmail" class="form-control" placeholder="partner@email.com" />
+                <select id="inviteRole" class="form-control-sm">
+                  <option value="viewer">Viewer</option>
+                  <option value="editor">Editor</option>
+                </select>
+                <button class="btn btn-primary btn-sm" id="inviteUserBtn">Invite</button>
+              </div>
+            </div>
+          </div>
+          <div class="glass-card" style="padding:1.5rem;">
+            <h3>Supabase Configuration</h3>
+            <p class="text-muted">Connect to your Supabase project for live sync.</p>
+            <div class="form-group" style="margin-top:1rem;">
+              <label>Supabase Project URL</label>
+              <input type="url" id="cfgUrl" class="form-control" placeholder="https://xxxx.supabase.co" />
+            </div>
+            <div class="form-group">
+              <label>Supabase Anon Key</label>
+              <input type="text" id="cfgKey" class="form-control" placeholder="eyJh..." />
+            </div>
+            <button class="btn btn-primary" id="saveConfigBtn">Save &amp; Reconnect</button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+</div>
+
+<div class="toast hidden" id="toast"><span id="toastMsg"></span></div>
+<div class="sidebar-overlay hidden" id="sidebarOverlay"></div>
+<script src="app.js"></script>
+</body>
+</html>
